@@ -14,17 +14,29 @@ function multiplicadorRota(origem, destino) {
   return 1.9;
 }
 
+function descontoPorVolume(volumes) {
+  const qtd = Number(volumes);
+  if (qtd > 50) return 0.15;
+  if (qtd > 20) return 0.10;
+  if (qtd > 10) return 0.05;
+  return 0;
+}
+
 function precificar(cotacao) {
   const faixa = FAIXAS.find((f) => Number(cotacao.peso_kg) < f.ate);
   const multiplicador = multiplicadorRota(cotacao.uf_origem, cotacao.uf_destino);
+  const desconto = descontoPorVolume(cotacao.volumes);
+
   const valorRota = faixa.preco * multiplicador;
-  const comImposto = valorRota * (1 + IMPOSTO);
+  const comDesconto = Math.trunc(valorRota * (1 - desconto) * 100) / 100;
+  const comImposto = comDesconto * (1 + IMPOSTO);
+
   return {
     valor_base: faixa.preco,
     multiplicador,
-    desconto: 0,
+    desconto,
     valor_total: Math.trunc(comImposto * 100) / 100,
   };
 }
 
-module.exports = { precificar, multiplicadorRota, FAIXAS, IMPOSTO };
+module.exports = { precificar, descontoPorVolume, multiplicadorRota, FAIXAS, IMPOSTO };
