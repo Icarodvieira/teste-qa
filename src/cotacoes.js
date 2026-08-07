@@ -9,13 +9,30 @@ function buscar(id, motor) {
   return cotacao ? comValores(cotacao, motor) : null;
 }
 
-function listar({ page = 1, limit = 20, cliente } = {}, motor) {
+function itemDeLista(cotacao, motor, versao) {
+  const valores = motor.precificar(cotacao);
+  if (versao === 'v2') {
+    const semDesconto = motor.precificar({ ...cotacao, volumes: 1 });
+    return {
+      id: cotacao.id, cliente: cotacao.cliente, peso_kg: cotacao.peso_kg,
+      volumes: cotacao.volumes, uf_origem: cotacao.uf_origem, uf_destino: cotacao.uf_destino,
+      faturada: cotacao.faturada, total: semDesconto.valor_total,
+    };
+  }
+  return {
+    id: cotacao.id, cliente: cotacao.cliente, peso_kg: cotacao.peso_kg,
+    volumes: cotacao.volumes, uf_origem: cotacao.uf_origem, uf_destino: cotacao.uf_destino,
+    faturada: cotacao.faturada, valor_total: valores.valor_total,
+  };
+}
+
+function listar({ page = 1, limit = 20, cliente } = {}, motor, versao = 'v1') {
   let itens = store.cotacoes;
   if (cliente) itens = itens.filter((c) => c.cliente === cliente);
   const inicio = (Number(page) - 1) * Number(limit);
   return {
     total: itens.length,
-    itens: itens.slice(inicio, inicio + Number(limit)).map((c) => comValores(c, motor)),
+    itens: itens.slice(inicio, inicio + Number(limit)).map((c) => itemDeLista(c, motor, versao)),
   };
 }
 

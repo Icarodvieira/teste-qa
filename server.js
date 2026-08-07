@@ -49,7 +49,7 @@ async function rotear(req, res, versao) {
       page: url.searchParams.get('page') ?? undefined,
       limit: url.searchParams.get('limit') ?? undefined,
       cliente: url.searchParams.get('cliente') ?? undefined,
-    }, motor));
+    }, motor, versao));
   }
 
   if (req.method === 'POST' && rota === '/api/cotacoes') {
