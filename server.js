@@ -1,7 +1,8 @@
 const http = require('node:http');
 const fs = require('node:fs');
 const path = require('node:path');
-const { store, reset } = require('./src/store.js');
+const { reset } = require('./src/store.js');
+const { criar, buscar, listar } = require('./src/cotacoes.js');
 
 const TIPOS = {
   '.html': 'text/html; charset=utf-8',
@@ -38,12 +39,32 @@ async function rotear(req, res, versao) {
   const url = new URL(req.url, 'http://localhost');
   const rota = url.pathname;
 
+  const motor = require(`./src/pricing/${versao}.js`);
+
   if (req.method === 'GET' && rota === '/api/versao') return json(res, 200, { versao });
   if (req.method === 'POST' && rota === '/_reset') { reset(); return json(res, 200, { ok: true }); }
+
   if (req.method === 'GET' && rota === '/api/cotacoes') {
-    const limite = Number(url.searchParams.get('limit') || 20);
-    return json(res, 200, { total: store.cotacoes.length, itens: store.cotacoes.slice(0, limite) });
+    return json(res, 200, listar({
+      page: url.searchParams.get('page') ?? undefined,
+      limit: url.searchParams.get('limit') ?? undefined,
+      cliente: url.searchParams.get('cliente') ?? undefined,
+    }, motor));
   }
+
+  if (req.method === 'POST' && rota === '/api/cotacoes') {
+    const corpo = await lerCorpo(req);
+    const resultado = criar(corpo, motor);
+    return json(res, resultado.status, resultado.corpo);
+  }
+
+  const detalhe = rota.match(/^\/api\/cotacoes\/(\d+)$/);
+  if (req.method === 'GET' && detalhe) {
+    const cotacao = buscar(detalhe[1], motor);
+    if (!cotacao) return json(res, 404, { erro: 'Cotação não encontrada' });
+    return json(res, 200, cotacao);
+  }
+
   if (req.method === 'GET') return servirEstatico(res, rota);
   return json(res, 404, { erro: 'Rota não encontrada' });
 }
