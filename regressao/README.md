@@ -22,7 +22,12 @@
 ## Ferramenta escolhida e por quê
 
 <!-- Escolha livre. Justifique em duas linhas: o que pesou na decisão, dado o
-     prazo e o objetivo desta suíte. -->
+     prazo e o objetivo desta suíte.
+
+     Se preferir não instalar nada: o Node 18+ já traz executor de testes
+     (`node --test`) e `fetch` embutido, o que basta para bater nas duas portas
+     e comparar valores. Playwright, Cypress, Postman/Newman, pytest — qualquer
+     um serve, desde que rode com um comando documentado. -->
 
 ## Cenários cobertos
 
