@@ -3,6 +3,7 @@ const fs = require('node:fs');
 const path = require('node:path');
 const { reset } = require('./src/store.js');
 const { criar, buscar, listar } = require('./src/cotacoes.js');
+const { faturar, listar: listarFaturas } = require('./src/faturas.js');
 
 const TIPOS = {
   '.html': 'text/html; charset=utf-8',
@@ -56,6 +57,18 @@ async function rotear(req, res, versao) {
     const corpo = await lerCorpo(req);
     const resultado = criar(corpo, motor);
     return json(res, resultado.status, resultado.corpo);
+  }
+
+  const faturarRota = rota.match(/^\/api\/cotacoes\/(\d+)\/faturar$/);
+  if (req.method === 'POST' && faturarRota) {
+    const resultado = await faturar(faturarRota[1], motor);
+    return json(res, resultado.status, resultado.corpo);
+  }
+
+  if (req.method === 'GET' && rota === '/api/faturas') {
+    return json(res, 200, listarFaturas({
+      id_cotacao: url.searchParams.get('id_cotacao') ?? undefined,
+    }));
   }
 
   const detalhe = rota.match(/^\/api\/cotacoes\/(\d+)$/);
