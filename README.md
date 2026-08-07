@@ -5,6 +5,36 @@ as **regras vigentes em produção** e o **contrato da API** como estão hoje na
 
 ---
 
+## Por onde começar
+
+Leia nesta ordem:
+
+1. **[DESAFIO.md](./DESAFIO.md)** — o que você precisa entregar, o prazo e o
+   contexto da decisão que está nas suas mãos.
+2. **Este README** — as regras vigentes da v1 e o contrato da API. É a
+   referência do que é considerado correto hoje.
+3. **[CHANGELOG-v2.md](./CHANGELOG-v2.md)** — o que o time de desenvolvimento
+   informou que mudou na v2.
+4. **[SPEC-desconto-por-volume.md](./SPEC-desconto-por-volume.md)** — a
+   especificação comercial da feature nova que a v2 traz.
+
+## O que você vai entregar
+
+Cada arquivo abaixo já está no repositório, com as seções prontas para
+preencher. O detalhamento do que se espera de cada um está no
+[DESAFIO.md](./DESAFIO.md).
+
+| Arquivo | O que colocar nele |
+|---------|--------------------|
+| [ESTRATEGIA.md](./ESTRATEGIA.md) | Análise de risco, priorização e o que decidiu **não** testar |
+| [MATRIZ_COBERTURA.md](./MATRIZ_COBERTURA.md) | Risco × cobertura |
+| [bugs/](./bugs/) | Um arquivo por problema, com causa provável e impacto, seguindo o [modelo](./bugs/_TEMPLATE.md) |
+| [regressao/](./regressao/) | Sua suíte automatizada comparando v1 e v2 ([leia primeiro](./regressao/README.md)) |
+| [PERGUNTAS_AO_PO.md](./PERGUNTAS_AO_PO.md) | O que ficou ambíguo e você precisa confirmar antes de assumir |
+| [RELEASE_DECISION.md](./RELEASE_DECISION.md) | Sua decisão de **GO / NO-GO** sobre a v2, justificada |
+
+---
+
 ## Como rodar
 
 Requer apenas Node.js 18 ou superior. Não há dependências para instalar.
