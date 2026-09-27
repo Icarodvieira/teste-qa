@@ -11,7 +11,7 @@
    curl -s http://localhost:3001/api/cotacoes/30
    curl -s http://localhost:3002/api/cotacoes/30
    ```
-   Ou através da interface, as selecionando na listagem
+   Ou pela tela, selecionando a cotação na listagem
 
 2. Criar, nas duas versões, uma cotação de exatamente 10 kg:
    ```bash
@@ -68,13 +68,19 @@ A correção é voltar para `<=`.
 - São **R$ 2.032,87** cobrados a mais.
 
 
-Comando usado, com v1 e v2 no ar e a carga inicial intacta:
+Para calcular o impacto financeiro, gerei um script simples:
+
+Antes de executar, resete a base.
 
 ```bash
-node scripts/impacto_001.js
+node scripts/impacto.js
 ```
 
-Como o script conta: uma cotação é afetada quando o `valor_base` da v2 difere do da v1, que segue a tabela do README. A diferença em dinheiro compara o valor da v2 com a base errada e com a base correta, mantendo o multiplicador e o desconto que a própria v2 aplicou. Assim, o número mede só a faixa e não depende da pergunta 1 ao PO. Aplicando o desconto conforme a SPEC, e com 10 volumes pela tabela, a diferença seria de R$ 2.009,46.
+
+Como o script conta: uma cotação é afetada quando o `valor_base` da v2 difere do da v1, que segue a tabela do README. 
+A diferença em dinheiro compara o valor da v2 com a base errada e com a base correta, mantendo o multiplicador e o desconto que a própria v2 aplicou. 
+
+
 
 ## Evidência
 
@@ -85,29 +91,29 @@ v1: {"id":30,"peso_kg":100,"volumes":8,"uf_origem":"SP","uf_destino":"MG","valor
 v2: {"id":30,"peso_kg":100,"volumes":8,"uf_origem":"SP","uf_destino":"MG","valor_base":180,"multiplicador":1.4,"desconto":0,"valor_total":282.22}
 ```
 
-Saída de `node scripts/impacto_001.js`:
+Saída de `node scripts/impacto.js`:
 
 ```text
 Cotações com a faixa errada na v2: 20 de 200
-  cotação 11: 100 kg, base 110 → 180, R$ 141,51 a mais (faturada)
-  cotação 22: 50 kg, base 60 → 110, R$ 95,76 a mais (faturada)
-  cotação 30: 100 kg, base 110 → 180, R$ 109,76 a mais (faturada)
-  cotação 33: 10 kg, base 25 → 60, R$ 70,76 a mais (faturada)
-  cotação 44: 100 kg, base 110 → 180, R$ 134,07 a mais (faturada)
-  cotação 55: 50 kg, base 60 → 110, R$ 106,40 a mais (faturada)
-  cotação 66: 10 kg, base 25 → 60, R$ 49,39 a mais
-  cotação 77: 100 kg, base 110 → 180, R$ 148,96 a mais
-  cotação 88: 50 kg, base 60 → 110, R$ 101,08 a mais
-  cotação 99: 10 kg, base 25 → 60, R$ 74,48 a mais
-  cotação 110: 100 kg, base 110 → 180, R$ 141,51 a mais
-  cotação 121: 50 kg, base 60 → 110, R$ 106,40 a mais
-  cotação 130: 10 kg, base 25 → 60, R$ 70,76 a mais
-  cotação 132: 10 kg, base 25 → 60, R$ 52,14 a mais
-  cotação 143: 100 kg, base 110 → 180, R$ 148,96 a mais
-  cotação 154: 50 kg, base 60 → 110, R$ 106,40 a mais
-  cotação 165: 10 kg, base 25 → 60, R$ 74,48 a mais
-  cotação 176: 100 kg, base 110 → 180, R$ 141,51 a mais
-  cotação 187: 50 kg, base 60 → 110, R$ 106,40 a mais
-  cotação 198: 10 kg, base 25 → 60, R$ 52,14 a mais
+  cotação 11: 100 kg → base de 110 para 180 → R$ 141,51 a mais
+  cotação 22: 50 kg → base de 60 para 110 → R$ 95,76 a mais
+  cotação 30: 100 kg → base de 110 para 180 → R$ 109,76 a mais
+  cotação 33: 10 kg → base de 25 para 60 → R$ 70,76 a mais
+  cotação 44: 100 kg → base de 110 para 180 → R$ 134,07 a mais
+  cotação 55: 50 kg → base de 60 para 110 → R$ 106,40 a mais
+  cotação 66: 10 kg → base de 25 para 60 → R$ 49,39 a mais
+  cotação 77: 100 kg → base de 110 para 180 → R$ 148,96 a mais
+  cotação 88: 50 kg → base de 60 para 110 → R$ 101,08 a mais
+  cotação 99: 10 kg → base de 25 para 60 → R$ 74,48 a mais
+  cotação 110: 100 kg → base de 110 para 180 → R$ 141,51 a mais
+  cotação 121: 50 kg → base de 60 para 110 → R$ 106,40 a mais
+  cotação 130: 10 kg → base de 25 para 60 → R$ 70,76 a mais
+  cotação 132: 10 kg → base de 25 para 60 → R$ 52,14 a mais
+  cotação 143: 100 kg → base de 110 para 180 → R$ 148,96 a mais
+  cotação 154: 50 kg → base de 60 para 110 → R$ 106,40 a mais
+  cotação 165: 10 kg → base de 25 para 60 → R$ 74,48 a mais
+  cotação 176: 100 kg → base de 110 para 180 → R$ 141,51 a mais
+  cotação 187: 50 kg → base de 60 para 110 → R$ 106,40 a mais
+  cotação 198: 10 kg → base de 25 para 60 → R$ 52,14 a mais
 Total cobrado a mais: R$ 2.032,87
 ```
