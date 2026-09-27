@@ -71,7 +71,7 @@ A correção é voltar para `<=`.
 Comando usado, com v1 e v2 no ar e a carga inicial intacta:
 
 ```bash
-node scripts/impacto.js
+node scripts/impacto_001.js
 ```
 
 Como o script conta: uma cotação é afetada quando o `valor_base` da v2 difere do da v1, que segue a tabela do README. A diferença em dinheiro compara o valor da v2 com a base errada e com a base correta, mantendo o multiplicador e o desconto que a própria v2 aplicou. Assim, o número mede só a faixa e não depende da pergunta 1 ao PO. Aplicando o desconto conforme a SPEC, e com 10 volumes pela tabela, a diferença seria de R$ 2.009,46.
@@ -85,7 +85,7 @@ v1: {"id":30,"peso_kg":100,"volumes":8,"uf_origem":"SP","uf_destino":"MG","valor
 v2: {"id":30,"peso_kg":100,"volumes":8,"uf_origem":"SP","uf_destino":"MG","valor_base":180,"multiplicador":1.4,"desconto":0,"valor_total":282.22}
 ```
 
-Saída de `node scripts/impacto.js`:
+Saída de `node scripts/impacto_001.js`:
 
 ```text
 Cotações com a faixa errada na v2: 20 de 200
