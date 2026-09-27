@@ -73,7 +73,7 @@ Para calcular o impacto financeiro, gerei um script simples:
 Antes de executar, resete a base.
 
 ```bash
-node scripts/impacto.js
+node scripts/impacto_001.js
 ```
 
 
@@ -91,7 +91,7 @@ v1: {"id":30,"peso_kg":100,"volumes":8,"uf_origem":"SP","uf_destino":"MG","valor
 v2: {"id":30,"peso_kg":100,"volumes":8,"uf_origem":"SP","uf_destino":"MG","valor_base":180,"multiplicador":1.4,"desconto":0,"valor_total":282.22}
 ```
 
-Saída de `node scripts/impacto.js`:
+Saída de `node scripts/impacto_001.js`:
 
 ```text
 Cotações com a faixa errada na v2: 20 de 200
