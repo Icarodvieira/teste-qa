@@ -1,39 +1,57 @@
 # Perguntas ao Product Owner
 
-<!-- Este arquivo é entregável.
-
-     Use-o para o que você NÃO conseguiu decidir sozinho a partir do README, da
-     especificação e do changelog — e que precisa de uma definição de produto
-     antes de virar um "esperado" no seu relatório.
-
-     Registrar a dúvida aqui não é sinal de insegurança: é o contrário. Assumir
-     uma interpretação em silêncio e reportar como problema aquilo que talvez
-     nunca tenha sido definido é o erro que queremos ver você evitar. -->
 
 ## Perguntas em aberto
 
-<!-- Para cada pergunta, use o bloco abaixo. Copie quantas vezes precisar. -->
 
-### 1. <título curto da dúvida>
+### 1. Exatamente 10 volumes tem desconto?
 
-**Onde apareceu:** <arquivo, seção, ou tela/rota onde você esbarrou nisso>
+**Onde apareceu:** na SPEC, na tabela de regras de desconto.
 
 **O que está ambíguo:**
-<!-- Cite as duas leituras possíveis, com o trecho de cada fonte que sustenta
-     cada uma. -->
+A tabela que descreve a regra de desconto ligado aos volumes, diz "10 a 19 → 5%", mas o texto abaixo diz que a política "vale para pedidos acima de 10 volumes".
 
-**O que a v1 faz hoje:**
+**O que a v1 faz hoje:** Não se aplica: a v1 não tem desconto.
+**O que a v2 faz:** 10 volumes ficam sem desconto, ou seja, ela segue o texto e não a tabela.
 
-**O que a v2 faz:**
-
-**Por que isso importa:**
-<!-- Consequência prática de cada interpretação: quantas cotações mudam de
-     valor, quanto muda em reais, quem é afetado. -->
+**Por que isso importa:** Se ficar mal definida, o sistema passa a conceder desconto a quem não tem direito, ou a negar a quem tem, em todo pedido com exatamente 10 volumes. 
+Por exemplo: na carga inicial, 36 cotações têm 10 volumes, resultado em uma diferença de R$ 392,30 entre as leituras.
 
 **Interpretação que adotei enquanto não há resposta:**
-<!-- E, importante: o que muda no seu relatório se o PO responder o contrário. -->
+vale a tabela, porque é a regra mais específica e os critérios de aceite são escritos em faixas.
 
-**Bloqueia o go/no-go?** Sim | Não — <por quê>
+Se o PO confirmar o texto, 10 volumes ficam sem desconto, e esse caso deixa de ser defeito.
+
+**Bloqueia o go/no-go?** Sim, o limite da política de desconto precisa estar definido antes de a v2 ir para produção para evitar conceder ou bloquear desconto indevidamente. 
+É uma definição rápida, basta confirmar qual leitura vale que o ajuste em código é pontual, não deve atrasar a release.
+
+### 2. Cotações não faturadas e criadas antes da v2, recebem o desconto quando forem faturadas?
+
+**Onde apareceu:** Nas regras de faturamento no README e nas restrições da SPEC.
+
+**O que está ambíguo:**
+A SPEC diz que a política "não é retroativa", mas só explica o que acontece com as cotações **já faturadas** ("mantêm o valor pelo qual foram faturadas"). Não diz nada sobre cotações criadas antes da v2 e ainda não faturadas. 
+
+O README cita que "A fatura é emitida pelo valor final vigente da cotação no momento da emissão."
+
+Isso me gerou dúvida se o valor final deve ser o **vigente no momento da cotação** ou o da nova regra de descontos.
+
+**O que a v1 faz hoje:** Não se aplica: a v1 não tem desconto.
+
+**O que a v2 faz:** Confirmar
+
+**Por que isso importa:**
+Define se o cliente é cobrado pelo valor que recebeu no orçamento ou pela nova politica de descontos.
+
+Na carga inicial, 140 das 200 cotações estão em aberto.
+
+**Interpretação que adotei enquanto não há resposta:**
+A de que o valor do faturamento deve ser o mesmo da cotação original para o cliente (sem desconto). Seguindo a meta descrita na spec de "dar previsibilidade de preço ao cliente".
+
+Se o PO decidir pela regra vigente na emissão da fatura, as cotações em aberto passam a receber o desconto ao serem faturadas, e o recálculo delas não é defeito.
+
+**Bloqueia o go/no-go?** Sim. No dia da subida, todas as cotações em aberto já existentes caem numa das duas leituras, e o sistema precisa aplicar a correta.
+
 
 ---
 
