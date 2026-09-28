@@ -20,10 +20,12 @@ Por exemplo: na carga inicial, 36 cotações têm 10 volumes, resultado em uma d
 **Interpretação que adotei enquanto não há resposta:**
 vale a tabela, porque é a regra mais específica e os critérios de aceite são escritos em faixas.
 
-Se o PO confirmar o texto, 10 volumes ficam sem desconto, e esse caso deixa de ser defeito.
+Se o PO confirmar o texto, 10 volumes ficam sem desconto, e esse caso deixa de ser defeito: a v2 já se comporta assim, e as 36 cotações não precisam de ajuste. O bug 003 fica só com os limites de 20 e 50 volumes.
 
 **Bloqueia o go/no-go?** Sim, o limite da política de desconto precisa estar definido antes de a v2 ir para produção para evitar conceder ou bloquear desconto indevidamente. 
 É uma definição rápida, basta confirmar qual leitura vale que o ajuste em código é pontual, não deve atrasar a release.
+
+---
 
 ### 2. Cotações não faturadas e criadas antes da v2, recebem o desconto quando forem faturadas?
 
@@ -38,7 +40,8 @@ Isso me gerou dúvida se o valor final deve ser o **vigente no momento da cotaç
 
 **O que a v1 faz hoje:** Não se aplica: a v1 não tem desconto.
 
-**O que a v2 faz:** Confirmar
+**O que a v2 faz:** Recalcula as cotações em aberto. 
+Por exemplo, a cotação 61 custa R\$ 234,08 na v1 e R\$ 222,37 na v2.
 
 **Por que isso importa:**
 Define se o cliente é cobrado pelo valor que recebeu no orçamento ou pela nova politica de descontos.
@@ -48,7 +51,9 @@ Na carga inicial, 140 das 200 cotações estão em aberto.
 **Interpretação que adotei enquanto não há resposta:**
 A de que o valor do faturamento deve ser o mesmo da cotação original para o cliente (sem desconto). Seguindo a meta descrita na spec de "dar previsibilidade de preço ao cliente".
 
-Se o PO decidir pela regra vigente na emissão da fatura, as cotações em aberto passam a receber o desconto ao serem faturadas, e o recálculo delas não é defeito.
+Se o PO decidir pela regra vigente na emissão da fatura, as cotações em aberto passam a receber o desconto ao serem faturadas, e o recálculo delas não é defeito. 
+Na carga inicial, 94 das 140 abertas teriam direito ao desconto, e o faturamento delas somaria **R\$ 1.159,20** a menos. 
+Se o PO também confirmar o texto na pergunta 1 (10 volumes sem desconto), seriam 69 cotações e **R\$ 880,99** a menos.
 
 **Bloqueia o go/no-go?** Sim. No dia da subida, todas as cotações em aberto já existentes caem numa das duas leituras, e o sistema precisa aplicar a correta.
 
