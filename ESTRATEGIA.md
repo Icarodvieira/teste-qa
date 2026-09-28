@@ -4,6 +4,10 @@
 
 Validar se a nova política de descontos é aplicada corretamente e não interfere no cálculo já realizado em produção. 
 
+Além do desconto, o CHANGELOG declara mais duas mudanças: uma listagem com payload mais enxuto e ajustes no fluxo de faturamento. 
+
+A validação cobre as três, e também o que o CHANGELOG diz que não mudou.
+
 É necessário confirmar se a v2 pode subir sem cobrar errado.
 
 ## Análise de risco
@@ -27,12 +31,8 @@ A probabilidade mede o quanto a v2 mexeu na área, segundo o CHANGELOG e a SPEC.
 
 README para as regras da v1, SPEC para a nova feature de desconto, CHANGELOG e commits como referência do que mudou.
 
-SPEC possuia uma divergência na limitação de volumes para desconto, registrei como pergunta ao PO.
 
 ## Abordagem por área
-
-<!-- Como testou cada área priorizada: exploratório, comparação entre versões,
-     leitura de código, automação. E por que essa escolha para essa área. -->
 
 | Área | Como | Por quê |
 |---|---|---|
@@ -43,12 +43,9 @@ SPEC possuia uma divergência na limitação de volumes para desconto, registrei
 | Tela de operação | Exploratório manual | São poucos fluxos e a verificação é visual. |
 | Validação de entrada | Automatizado: as regras de validação do README. Exploratório com o Postman: entradas sem regra definida | A regra escrita é barata de automatizar. As entradas sem regra definida precisam ser exploradas antes de terem um esperado. |
 | Todas | Leitura do código e do histórico | Para entender o que foi feito e indicar a causa provável |
+| Impacto dos problemas | Consulta à API das duas versões sobre a carga inicial; para os problemas com valor em reais, um script simples em `scripts/` | O impacto precisa ser medido na carga e reproduzível por outra pessoa |
 
 ## O que decidi NÃO testar
-
-<!-- Esta seção é obrigatória e é avaliada com peso.
-     Liste o que ficou de fora e a justificativa de cada corte. Cortar escopo com
-     critério é competência; não cortar nada em 5 dias não é credível. -->
 
 | Ficou de fora | Por quê | Risco que estou aceitando |
 |---|---|---|
@@ -60,8 +57,11 @@ SPEC possuia uma divergência na limitação de volumes para desconto, registrei
 
 - v1 e v2 rodando em processos separados (cada um com os próprios dados em memória.)
 - Carga inicial que foi disponibilizada e volta ao estado inicial com `POST /_reset`
+- As 60 faturas da carga inicial não têm o campo `valor`, que o README define ([src/seed.js:26-35](src/seed.js#L26-L35)). As faturas emitidas pela API têm. É um problema da massa de dados, não do produto, e existe nas duas versões.
 - Exploração manual no Postman com um environment para cada versão.
+- Scripts de impacto em `scripts/`, que consultam a API e comparam a base inicial das duas versões.
 
 ## Limitações da minha análise
 
-<!-- O que você não conseguiu concluir, e o que precisaria para concluir. -->
+- **A carga inicial não cobre todas as combinações.** Ela tem só 22 das 48 combinações de faixa de peso × tipo de rota × nível de desconto: nenhuma rota dentro da mesma UF e nenhum pedido com mais de 23 volumes. O impacto medido na carga não enxerga essas classes (o erro no limite de 50 volumes, por exemplo, dá zero na carga). A suíte cria cotações novas para cobrir as 48.
+- **As faturas da carga não têm o campo `valor`.** Não dá para comparar o valor exibido com o valor efetivamente faturado. Para a não retroatividade, comparo o valor da v2 com o da v1, que é a versão pela qual essas cotações foram faturadas.
