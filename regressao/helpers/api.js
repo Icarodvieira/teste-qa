@@ -10,7 +10,7 @@ async function chamar(versao, metodo, caminho, corpo) {
     headers: corpo ? { 'Content-Type': 'application/json' } : undefined,
     body: corpo ? JSON.stringify(corpo) : undefined,
   });
-  return { status: resposta.status, corpo: await resposta.json() };
+  return { status: resposta.status, tipo: resposta.headers.get('content-type'), corpo: await resposta.json() };
 }
 
 function novaCotacao(peso_kg, uf_origem, uf_destino, volumes = 1) {
@@ -19,6 +19,7 @@ function novaCotacao(peso_kg, uf_origem, uf_destino, volumes = 1) {
 
 module.exports = {
   novaCotacao,
+  versao: (versao) => chamar(versao, 'GET', '/api/versao'),
   reset: (versao) => chamar(versao, 'POST', '/_reset'),
   criar: (versao, dados) => chamar(versao, 'POST', '/api/cotacoes', dados),
   detalhe: (versao, id) => chamar(versao, 'GET', `/api/cotacoes/${id}`),
