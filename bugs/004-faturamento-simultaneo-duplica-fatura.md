@@ -54,16 +54,18 @@ cotacao.faturada = true;
 
 Um segundo pedido que chegue durante a espera encontra a cotação ainda não marcada e passa pela conferência.
 
-A espera entrou no commit `079f906` ("feat: emissao de fatura a partir da cotacao"). O CHANGELOG da v2 cita "ajustes na emissão de fatura para deixar o caminho de gravação mais próximo do que será usado quando o armazenamento sair da memória". As duas versões usam o mesmo `faturas.js` neste ambiente, por isso o problema aparece também na v1. Não dá para afirmar se a produção atual tem o mesmo código.
+A espera entrou no commit `079f906` ("feat: emissao de fatura a partir da cotacao"). O CHANGELOG da v2 cita "ajustes na emissão de fatura para deixar o caminho de gravação mais próximo do que será usado quando o armazenamento sair da memória". As duas versões usam o mesmo `faturas.js` neste ambiente, por isso o problema aparece também na v1.
 
-A correção é marcar a cotação como faturada antes da espera, para que a conferência e a marcação aconteçam juntas, desfazendo a marcação se a gravação falhar. Com banco de dados, o equivalente é uma restrição de unicidade por cotação nas faturas. Testei a primeira opção numa cópia do código: os dois pedidos simultâneos passam a responder um `201` e um `409`, com uma fatura só. Desabilitar o botão durante o pedido ajuda, mas não substitui a correção no servidor, porque não protege quem chama a API diretamente.
+A correção é marcar a cotação como faturada antes da espera, para que a conferência e a marcação aconteçam juntas, desfazendo a marcação se a gravação falhar. 
+Com banco de dados, o equivalente é uma restrição de unicidade por cotação nas faturas.  
+Desabilitar o botão durante o pedido ajuda, mas não substitui a correção no servidor, porque não protege quem chama a API diretamente.
 
 ## Impacto
 
 - **Quando acontece, o cliente é cobrado duas vezes** pelo valor inteiro da cotação.
-- **Na carga inicial, nenhuma fatura está duplicada:** são 60 faturas para 60 cotações diferentes. As 140 cotações em aberto estão expostas.
-- **A probabilidade é baixa pela tela** e real pela API: basta uma integração, uma nova tentativa automática depois de um timeout ou dois operadores na mesma cotação. Com armazenamento real, a janela deixa de ser os 15 ms simulados e passa a ser o tempo real de gravação.
-- A severidade é Alta porque cobra em dobro quando ocorre, mas depende de pedidos simultâneos e não acontece em escala. Como afeta as duas versões, não é uma regressão comprovada da v2.
+- **A probabilidade é baixa pela tela** e existe pela API.
+- A severidade é Alta porque cobra em dobro quando ocorre, mas depende de pedidos simultâneos, o que o torna pouco provável e não acontece em escala. 
+Como afeta as duas versões, não é uma regressão da v2.
 
 ## Evidência
 
