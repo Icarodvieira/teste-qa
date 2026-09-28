@@ -1,0 +1,14 @@
+{
+  "name": "regressao-cotacao-faturamento",
+  "private": true,
+  "description": "Suíte de regressão que compara a v1 e a v2 do Cotação & Faturamento",
+  "scripts": {
+    "test": "jest --runInBand"
+  },
+  "devDependencies": {
+    "jest": "29.7.0"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}
